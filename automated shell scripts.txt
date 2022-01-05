@@ -1,0 +1,57 @@
+#!/bin/bash
+export ORACLE_SID=ORCLCDB_STBY
+export ORACLE_HOME=/opt/oracle/product/21c/dbhome_1
+
+
+rec_filename='RECOVERY_TRIGGERED.lck'
+if [ ! -f "$rec_filename" ]
+then
+
+$ORACLE_HOME/bin/sqlplus / as sysdba <<EOF
+commit;
+@sequence_gap.sql
+exit;
+EOF
+
+j=`cat sequence_gap.log`
+
+if [ ! -z "$j" ]
+then
+
+if [ $j -gt 4 ]
+then
+ echo "RECOVERY_RUNNING" > RECOVERY_TRIGGERED.lck
+fi
+
+rec_filename='RECOVERY_TRIGGERED.lck'
+if [ -f "$rec_filename" ]
+then
+rman target / <<EOF
+alter database recover managed standby database cancel;
+RECOVER STANDBY DATABASE FROM SERVICE 'ORCLCDB';
+commit;
+shutdown immediate;
+startup mount;
+exit
+EOF
+fi
+
+$ORACLE_HOME/bin/sqlplus / as sysdba <<EOF
+@clear_standbylogs_scirpt.sql
+@clear_standbylogs.log
+conn system/Hugplayer#1@ORCLCDB
+ALTER SYSTEM ARCHIVE LOG CURRENT;
+conn / as sysdba
+commit;
+shutdown immediate;
+startup
+alter pluggable database all open;
+alter database recover managed standby database disconnect;
+exit;
+EOF
+
+mv RECOVERY_TRIGGERED.lck RECOVERY_COMPLETED_`date +%Y%m%d`.lck
+
+fi
+fi
+
