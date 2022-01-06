@@ -1,0 +1,23 @@
+#!/bin/bash
+export prod="09-OCT-21 02.51.58.000000000 PM"
+export stan="09-OCT-21 02.52.04.000000000 PM"
+export ORACLE_SID=ORCLCDB_STBY
+export ORACLE_HOME=/opt/oracle/product/21c/dbhome_1
+
+$ORACLE_HOME/bin/sqlplus / as sysdba <<EOF
+set pagesize 0 feedback off verify off heading off echo off
+
+spool temp.txt
+select 'export '||'time='||extract(second from diff) seconds from (
+select
+  to_timestamp_tz('${stan}', 'dd-mon-yyyy hh.mi.ssxff PM tzh:tzm') -
+  to_timestamp_tz('${prod}', 'dd-mon-yyyy hh.mi.ssxff PM tzh:tzm') diff
+from dual
+);
+
+spool off
+EXIT
+echo `cat temp.txt|grep "export *[a-z]*="` >> variables.txt
+
+cat variables.txt
+EOF
