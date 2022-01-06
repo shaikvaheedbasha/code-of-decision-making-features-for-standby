@@ -1,0 +1,330 @@
++ export ORACLE_SID=ORCLCDB_STBY
++ ORACLE_SID=ORCLCDB_STBY
++ export ORACLE_HOME=/opt/oracle/product/21c/dbhome_1
++ ORACLE_HOME=/opt/oracle/product/21c/dbhome_1
++ rec_filename=RECOVERY_TRIGGERED.lck
++ '[' '!' -f RECOVERY_TRIGGERED.lck ']'
++ /opt/oracle/product/21c/dbhome_1/bin/sqlplus / as sysdba
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Nov 6 14:34:55 2021
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 21c Enterprise Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL>
+Commit complete.
+
+SQL>                   11
+SQL> Disconnected from Oracle Database 21c Enterprise Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+++ cat sequence_gap.log
++ j='                       11                                                       '
++ '[' '!' -z '                       11                                                       ' ']'
++ '[' 11 -gt 4 ']'
++ echo RECOVERY_RUNNING
++ rec_filename=RECOVERY_TRIGGERED.lck
++ '[' -f RECOVERY_TRIGGERED.lck ']'
++ rman target /
+
+Recovery Manager: Release 21.0.0.0.0 - Production on Sat Nov 6 14:34:56 2021
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: ORCLCDB (DBID=2854111636)
+
+RMAN>
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of sql statement command at 11/06/2021 14:34:59
+ORA-16136: Managed Standby Recovery not active
+
+RMAN>
+Starting recover at 06-NOV-21
+using target database control file instead of recovery catalog
+Oracle instance started
+
+Total System Global Area    4630511432 bytes
+
+Fixed Size                     9695048 bytes
+Variable Size                855638016 bytes
+Database Buffers            3758096384 bytes
+Redo Buffers                   7081984 bytes
+
+contents of Memory Script:
+{
+   restore standby controlfile from service  'ORCLCDB';
+   alter database mount standby database;
+}
+executing Memory Script
+
+Starting restore at 06-NOV-21
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=258 device type=DISK
+
+channel ORA_DISK_1: starting datafile backup set restore
+channel ORA_DISK_1: using network backup set from service ORCLCDB
+channel ORA_DISK_1: restoring control file
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:01
+output file name=/opt/oracle/oradata/ORCLCDB/control01.ctl
+output file name=/opt/oracle/oradata/ORCLCDB/control02.ctl
+Finished restore at 06-NOV-21
+
+released channel: ORA_DISK_1
+Statement processed
+Executing: alter system set standby_file_management=manual
+
+contents of Memory Script:
+{
+set newname for tempfile  9 to
+ "/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_temp_jngxr4mw_.tmp";
+   switch tempfile all;
+set newname for datafile  28 to
+ "/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_system_jngt3mqf_.dbf";
+set newname for datafile  29 to
+ "/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_sysaux_jngt3mqh_.dbf";
+set newname for datafile  30 to
+ "/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_undotbs1_jngt3mqj_.dbf";
+set newname for datafile  46 to
+ "/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_user_dat_jo7w0xpx_.dbf";
+   catalog datafilecopy  "/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_system_jngt3mqf_.dbf",
+ "/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_sysaux_jngt3mqh_.dbf",
+ "/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_undotbs1_jngt3mqj_.dbf",
+ "/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_user_dat_jo7w0xpx_.dbf";
+   switch datafile all;
+}
+executing Memory Script
+
+executing command: SET NEWNAME
+
+Starting implicit crosscheck backup at 06-NOV-21
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=34 device type=DISK
+Crosschecked 21 objects
+Finished implicit crosscheck backup at 06-NOV-21
+
+Starting implicit crosscheck copy at 06-NOV-21
+using channel ORA_DISK_1
+Finished implicit crosscheck copy at 06-NOV-21
+
+searching for all files in the recovery area
+cataloging files...
+cataloging done
+
+List of Cataloged Files
+=======================
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_353_jrc958on_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_354_jrc959lq_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_355_jrc95fh3_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_356_jrc95jdv_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_357_jrc95mfz_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_358_jrc95ph1_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_359_jrc95sj3_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_360_jrc95wkh_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_361_jrc95zlb_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_362_jrc962mc_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_363_jrc965nk_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_364_jrcbgxjp_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_05/o1_mf_1_365_jrcbh9vc_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_366_jrd4rdnc_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_367_jrdbosrf_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_368_jrdyysfd_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_369_jrdz55mw_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_371_jrf0fhpt_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_372_jrf0fhqs_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_373_jrf0fhsh_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_374_jrf0fhss_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_375_jrf0fhtv_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_376_jrf0fhv5_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_377_jrf0fhy2_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_370_jrf0fj3b_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_378_jrf0rc9g_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_379_jrf1dqbg_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_380_jrf1oxjq_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_381_jrf1ozgx_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_382_jrf1p2j7_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_383_jrf1p5jk_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_384_jrf1p8k8_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_385_jrf1pcoc_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_386_jrf1pgpf_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_387_jrf1pko3_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_388_jrf1pnnv_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_389_jrf1pqrd_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_391_jrf28c31_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_392_jrf28c3n_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_393_jrf28c5j_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_394_jrf28c6f_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_395_jrf28c81_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_396_jrf28ccq_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_390_jrf28cd6_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_397_jrf2b3jv_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_398_jrf2b6m8_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_399_jrf2b9lg_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_400_jrf2bdnc_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_403_jrf2q021_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_402_jrf2q02g_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_404_jrf2q05y_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_405_jrf2q06b_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_401_jrf2q0gp_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_406_jrf2scbs_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_407_jrf2sghj_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_408_jrf2sm43_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_409_jrf2wvsm_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_410_jrf36nq9_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/archivelog/2021_11_06/o1_mf_1_411_jrf48wz6_.arc
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/backupset/2021_09_19/o1_mf_ncnnf_TAG20210919T091235_jnfzr4jh_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/backupset/2021_09_19/o1_mf_ncnnf_TAG20210919T153034_jngoww2w_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_09_19/o1_mf_s_1083655982_jnfzr5rp_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_09_19/o1_mf_s_1083667671_jng5cgyg_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_09_19/o1_mf_s_1083679317_jngjxvnk_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_09_19/o1_mf_s_1083684313_jngowxc5_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_09_19/o1_mf_s_1083685875_jngq4jl8_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_09_28/o1_mf_s_1083693317_jo4y33dr_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_09_28/o1_mf_s_1084417145_jo51fqz5_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_11_05/o1_mf_s_1087827601_jrbjvcyg_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_11_05/o1_mf_s_1087848423_jrc3vr11_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_11_05/o1_mf_s_1087852353_jrc7lry4_.bkp
+File Name: /u01/app/oracle/flash_reco/ORCLCDB_STBY/autobackup/2021_11_05/o1_mf_s_1087854215_jrc9dk9d_.bkp
+
+renamed tempfile 9 to /opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_temp_jngxr4mw_.tmp in control file
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+cataloged datafile copy
+datafile copy file name=/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_system_jngt3mqf_.dbf RECID=4 STAMP=1087914928
+cataloged datafile copy
+datafile copy file name=/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_sysaux_jngt3mqh_.dbf RECID=5 STAMP=1087914928
+cataloged datafile copy
+datafile copy file name=/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_undotbs1_jngt3mqj_.dbf RECID=6 STAMP=1087914928
+cataloged datafile copy
+datafile copy file name=/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_user_dat_jo7w0xpx_.dbf RECID=7 STAMP=1087914934
+
+datafile 28 switched to datafile copy
+input datafile copy RECID=4 STAMP=1087914928 file name=/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_system_jngt3mqf_.dbf
+datafile 29 switched to datafile copy
+input datafile copy RECID=5 STAMP=1087914928 file name=/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_sysaux_jngt3mqh_.dbf
+datafile 30 switched to datafile copy
+input datafile copy RECID=6 STAMP=1087914928 file name=/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_undotbs1_jngt3mqj_.dbf
+datafile 46 switched to datafile copy
+input datafile copy RECID=7 STAMP=1087914934 file name=/opt/oracle/oradata/ORCLCDB_STBY/CC5CD98C3B092368E0534700000B14EA/datafile/o1_mf_user_dat_jo7w0xpx_.dbf
+Executing: alter database rename file '/opt/oracle/oradata/ORCLCDB/onlinelog/o1_mf_4_jng4jhc2_.log' to '/opt/oracle/oradata/ORCLCDB_STBY/onlinelog/o1_mf_4_jngmymyq_.log'
+Executing: alter database rename file '/u01/app/oracle/flash_reco/ORCLCDB/onlinelog/o1_mf_4_jng4jhg0_.log' to '/u01/app/oracle/flash_reco/ORCLCDB_STBY/onlinelog/o1_mf_4_jngmyn3g_.log'
+Executing: alter database rename file '/opt/oracle/oradata/ORCLCDB/onlinelog/o1_mf_5_jng4jro7_.log' to '/opt/oracle/oradata/ORCLCDB_STBY/onlinelog/o1_mf_5_jngmypwg_.log'
+Executing: alter database rename file '/u01/app/oracle/flash_reco/ORCLCDB/onlinelog/o1_mf_5_jng4jrr4_.log' to '/u01/app/oracle/flash_reco/ORCLCDB_STBY/onlinelog/o1_mf_5_jngmyq03_.log'
+Executing: alter database rename file '/opt/oracle/oradata/ORCLCDB/onlinelog/o1_mf_6_jng4k0c7_.log' to '/opt/oracle/oradata/ORCLCDB_STBY/onlinelog/o1_mf_6_jngmyv1f_.log'
+Executing: alter database rename file '/u01/app/oracle/flash_reco/ORCLCDB/onlinelog/o1_mf_6_jng4k0g3_.log' to '/u01/app/oracle/flash_reco/ORCLCDB_STBY/onlinelog/o1_mf_6_jngmyv53_.log'
+
+contents of Memory Script:
+{
+  recover database from service  'ORCLCDB';
+}
+executing Memory Script
+
+Starting recover at 06-NOV-21
+using channel ORA_DISK_1
+skipping datafile 5; already restored to SCN 2648025
+skipping datafile 6; already restored to SCN 2648025
+skipping datafile 8; already restored to SCN 2648025
+skipping datafile 9; already restored to SCN 14117553
+skipping datafile 10; already restored to SCN 14117553
+skipping datafile 11; already restored to SCN 14117553
+skipping datafile 12; already restored to SCN 14117553
+skipping datafile 28; already restored to SCN 14117554
+skipping datafile 29; already restored to SCN 14117554
+skipping datafile 30; already restored to SCN 14117554
+skipping datafile 46; already restored to SCN 14117554
+channel ORA_DISK_1: starting incremental datafile backup set restore
+channel ORA_DISK_1: using network backup set from service ORCLCDB
+destination for restore of datafile 00001: /opt/oracle/oradata/ORCLCDB/system01.dbf
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:03
+channel ORA_DISK_1: starting incremental datafile backup set restore
+channel ORA_DISK_1: using network backup set from service ORCLCDB
+destination for restore of datafile 00003: /opt/oracle/oradata/ORCLCDB/sysaux01.dbf
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:03
+channel ORA_DISK_1: starting incremental datafile backup set restore
+channel ORA_DISK_1: using network backup set from service ORCLCDB
+destination for restore of datafile 00004: /opt/oracle/oradata/ORCLCDB/undotbs01.dbf
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:01
+channel ORA_DISK_1: starting incremental datafile backup set restore
+channel ORA_DISK_1: using network backup set from service ORCLCDB
+destination for restore of datafile 00007: /opt/oracle/oradata/ORCLCDB/users01.dbf
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:01
+
+starting media recovery
+
+media recovery complete, elapsed time: 00:00:00
+Finished recover at 06-NOV-21
+Executing: alter system set standby_file_management=auto
+Finished recover at 06-NOV-21
+
+RMAN>
+Statement processed
+
+RMAN>
+database dismounted
+Oracle instance shut down
+
+RMAN>
+connected to target database (not started)
+Oracle instance started
+database mounted
+
+Total System Global Area    4630511432 bytes
+
+Fixed Size                     9695048 bytes
+Variable Size                855638016 bytes
+Database Buffers            3758096384 bytes
+Redo Buffers                   7081984 bytes
+
+RMAN>
+
+Recovery Manager complete.
++ /opt/oracle/product/21c/dbhome_1/bin/sqlplus / as sysdba
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Nov 6 14:36:00 2021
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 21c Enterprise Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> ALTER DATABASE CLEAR LOGFILE GROUP 10;
+ALTER DATABASE CLEAR LOGFILE GROUP 11;
+ALTER DATABASE CLEAR LOGFILE GROUP 12;
+SQL> SQL> Connected.
+SQL> SQL> Connected.
+SQL> SQL> ORA-01109: database not open
+
+
+Database dismounted.
+ORACLE instance shut down.
+SQL> ORACLE instance started.
+Total System Global Area 4630511432 bytes
+Fixed Size                  9695048 bytes
+Variable Size             855638016 bytes
+Database Buffers         3758096384 bytes
+Redo Buffers                7081984 bytes
+Database mounted.
+ORA-16000: database or pluggable database open for read-only access
+
+
+SQL> SQL> SQL> Disconnected from Oracle Database 21c Enterprise Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+++ date +%Y%m%d
++ mv RECOVERY_TRIGGERED.lck RECOVERY_COMPLETED_20211106.lck
+[oracle@instance-20210914-dr ~]$
